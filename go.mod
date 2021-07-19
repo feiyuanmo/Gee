@@ -1,3 +1,3 @@
-module github.com/feiyuanmo/Gee
+module github.com/feiyuanmo/gee
 
 go 1.16
