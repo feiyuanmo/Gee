@@ -27,13 +27,17 @@ func (engine *Engine) GET(path string, handler HandlerFunc) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	key := req.Method + "-" + req.URL.Path
-	log.Infof("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
-	hadler, ok := engine.router[key]
-	if ok {
-		hadler(w, req)
+	if req.URL.Path == "/facicon.ico" {
+
 	} else {
-		fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
+		key := req.Method + "-" + req.URL.Path
+		log.Infof("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
+		hadler, ok := engine.router[key]
+		if ok {
+			hadler(w, req)
+		} else {
+			fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
+		}
 	}
 }
 
