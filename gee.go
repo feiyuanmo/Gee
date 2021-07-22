@@ -10,7 +10,7 @@ import (
 type Engine struct{}
 
 func New() *Engine {
-	log.Info("------------new gee Engine------------\n")
+	log.Info("------------new gee Engine------------")
 	return &Engine{}
 }
 
@@ -19,6 +19,6 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 }
 
 func (engine *Engine) Run(addr string) error {
-	log.Infof("------------Run gee Engine:%s------------\n", addr)
+	log.Infof("------------Run gee Engine:%s------------", addr)
 	return http.ListenAndServe(addr, engine)
 }
