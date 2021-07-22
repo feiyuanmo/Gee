@@ -29,10 +29,10 @@ const (
 )
 
 func Info(v ...interface{}) {
-	//
-	//str := "\033[31m"
-	//v = append(str..., v...)
-	v = append(v, "\033[31m1111111111111111111111111111111111\033[0m")
+	var str []interface{} = make([]interface{}, 1)
+	str[0] = "\033[31m"
+	v = append(str, v)
+	v = append(v, "\033[0m")
 	infoLog.Println(v...)
 }
 
