@@ -17,8 +17,6 @@ var (
 var (
 	Error  = errorLog.Println
 	Errorf = errorLog.Printf
-
-	Infof = infoLog.Printf
 )
 
 // log levels
@@ -30,7 +28,15 @@ const (
 
 func Info(v ...interface{}) {
 	var str []interface{} = make([]interface{}, 1)
-	str[0] = "\033[31m"
+	str[0] = "\033[0;30;47m"
+	v = append(str, v)
+	v = append(v, "\033[0m")
+	infoLog.Println(v...)
+}
+
+func Infof(v ...interface{}) {
+	var str []interface{} = make([]interface{}, 1)
+	str[0] = "\033[0;30;47m"
 	v = append(str, v)
 	v = append(v, "\033[0m")
 	infoLog.Println(v...)
