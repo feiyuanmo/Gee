@@ -27,7 +27,7 @@ func (engine *Engine) GET(path string, handler HandlerFunc) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/facicon.ico" {
+	if req.URL.Path == "/favicon.ico" {
 
 	} else {
 		key := req.Method + "-" + req.URL.Path
