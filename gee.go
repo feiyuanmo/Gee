@@ -12,8 +12,7 @@ type Engine struct {
 	router map[string]HandlerFunc
 }
 
-//func New() *Engine {
-func New() http.Handler {
+func New() *Engine {
 	log.Info("------------new gee Engine------------")
 	return &Engine{router: make(map[string]HandlerFunc)}
 }
