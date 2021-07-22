@@ -29,6 +29,7 @@ const (
 )
 
 func Info(v ...interface{}) {
+	//
 	for _, val := range v {
 		infoLog.Println(val)
 	}
