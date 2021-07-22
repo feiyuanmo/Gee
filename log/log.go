@@ -34,12 +34,8 @@ func Info(v ...interface{}) {
 	infoLog.Println(v...)
 }
 
-func Infof(v ...interface{}) {
-	var str []interface{} = make([]interface{}, 1)
-	str[0] = "\033[0;30;47m"
-	v = append(str, v)
-	v = append(v, "\033[0m")
-	infoLog.Println(v...)
+func Infof(str string, v ...interface{}) {
+	infoLog.Printf("\033[0;30;47m"+str+"\033[0m", v...)
 }
 
 // SetLevel controls log level
