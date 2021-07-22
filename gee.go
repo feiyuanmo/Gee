@@ -10,7 +10,7 @@ import (
 type Engine struct{}
 
 func New() *Engine {
-	log.Info("------------new gee Engine------------\n")
+	log.Info("------------new gee Engine------------\n", "------------new gee Engine------------\n")
 	return &Engine{}
 }
 
