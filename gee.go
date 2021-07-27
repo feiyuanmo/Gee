@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/feiyuanmo/gee/log"
@@ -9,17 +8,16 @@ import (
 
 type HandlerFunc func(w http.ResponseWriter, req *http.Request)
 type Engine struct {
-	router map[string]HandlerFunc
+	router *router
 }
 
 func New() *Engine {
-	log.Info("------------new gee Engine------------")
-	return &Engine{router: make(map[string]HandlerFunc)}
+	log.Infof("------------new gee Engine------------")
+	return &Engine{router: newRouter()}
 }
 
 func (engine *Engine) addRouter(method, path string, handler HandlerFunc) {
-	key := method + "-" + path
-	engine.router[key] = handler
+	engine.router.addRoute(method, path, handler)
 }
 
 func (engine *Engine) GET(path string, handler HandlerFunc) {
@@ -27,18 +25,7 @@ func (engine *Engine) GET(path string, handler HandlerFunc) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/favicon.ico" {
-
-	} else {
-		key := req.Method + "-" + req.URL.Path
-		log.Infof("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
-		hadler, ok := engine.router[key]
-		if ok {
-			hadler(w, req)
-		} else {
-			fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
-		}
-	}
+	engine.router.handle(w, req)
 }
 
 // handler := (http.Handler)(engine)  手动转换为借口类型
