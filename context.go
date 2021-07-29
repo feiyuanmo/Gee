@@ -24,7 +24,7 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	}
 }
 
-func (c *Context) string(code int, format string, values ...interface{}) {
+func (c *Context) String(code int, format string, values ...interface{}) {
 	c.Status(code)
 	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
