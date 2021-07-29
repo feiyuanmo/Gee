@@ -17,6 +17,7 @@ func newRouter() *router {
 func (r *router) addRoute(method string, path string, handler HandlerFunc) {
 	log.InfofB("Route %4s - %s", method, path)
 	key := method + path
+	log.InfofB("%v", handler)
 	r.handlers[key] = handler
 }
 
