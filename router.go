@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/feiyuanmo/gee/log"
@@ -21,17 +20,16 @@ func (r *router) addRoute(method string, path string, handler HandlerFunc) {
 	r.handlers[key] = handler
 }
 
-func (r *router) handle(w http.ResponseWriter, req *http.Request) {
-	if req.URL.Path == "/favicon.ico" {
+func (r *router) handle(c *Context) {
+	if c.Path == "/favicon.ico" {
 
 	} else {
-		key := req.Method + "-" + req.URL.Path
-		log.InfofW("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
-		hadler, ok := r.handlers[key]
-		if ok {
-			hadler(w, req)
+		key := c.Method + "-" + c.Path
+		log.InfofW("IP:%s Method:%s Path:%s", c.Host, c.Method, c.Path)
+		if hadler, ok := r.handlers[key]; ok {
+			hadler(c)
 		} else {
-			fmt.Fprintf(w, "404 NOT FOUND: %s\n", req.URL)
+			c.string(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
 		}
 	}
 }

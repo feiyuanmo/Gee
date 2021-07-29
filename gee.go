@@ -6,7 +6,7 @@ import (
 	"github.com/feiyuanmo/gee/log"
 )
 
-type HandlerFunc func(w http.ResponseWriter, req *http.Request)
+type HandlerFunc func(c *Context)
 type Engine struct {
 	router *router
 }
@@ -24,8 +24,13 @@ func (engine *Engine) GET(path string, handler HandlerFunc) {
 	engine.addRouter("GET", path, handler)
 }
 
+func (engine *Engine) POST(path string, handler HandlerFunc) {
+	engine.addRouter("POST", path, handler)
+}
+
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	engine.router.handle(w, req)
+	c := newContext(w, req)
+	engine.router.handle(c)
 }
 
 // handler := (http.Handler)(engine)  手动转换为借口类型
