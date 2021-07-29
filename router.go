@@ -16,7 +16,7 @@ func newRouter() *router {
 }
 
 func (r *router) addRoute(method string, path string, handler HandlerFunc) {
-	log.Infof("Route %4s - %s", method, path)
+	log.InfofB("Route %4s - %s", method, path)
 	key := method + path
 	r.handlers[key] = handler
 }
@@ -26,7 +26,7 @@ func (r *router) handle(w http.ResponseWriter, req *http.Request) {
 
 	} else {
 		key := req.Method + "-" + req.URL.Path
-		log.Infof("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
+		log.InfofW("IP:%s Method:%s Path:%s", req.Host, req.Method, req.URL.Path)
 		hadler, ok := r.handlers[key]
 		if ok {
 			hadler(w, req)

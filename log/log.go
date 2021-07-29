@@ -15,6 +15,8 @@ var (
 )
 
 var (
+	Info   = infoLog.Println
+	Infof  = infoLog.Printf
 	Error  = errorLog.Println
 	Errorf = errorLog.Printf
 )
@@ -26,16 +28,20 @@ const (
 	Disabled
 )
 
-func Info(v ...interface{}) {
+func InfoW(v ...interface{}) {
 	var str []interface{} = make([]interface{}, 1)
-	str[0] = "\033[0;30;47m"
+	str[0] = "\033[0;30;46m"
 	v = append(str, v)
 	v = append(v, "\033[0m")
-	infoLog.Println(v...)
+	Info(v...)
 }
 
-func Infof(str string, v ...interface{}) {
-	infoLog.Printf("\033[0;30;47m"+str+"\033[0m", v...)
+func InfofB(str string, v ...interface{}) {
+	Infof("\033[0;30;47m"+str+"\033[0m", v...)
+}
+
+func InfofW(str string, v ...interface{}) {
+	Infof("\033[0;30;47m"+str+"\033[0m", v...)
 }
 
 // SetLevel controls log level

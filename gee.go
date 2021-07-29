@@ -12,7 +12,7 @@ type Engine struct {
 }
 
 func New() *Engine {
-	log.Infof("------------new gee Engine------------")
+	log.InfofW("------------new gee Engine------------")
 	return &Engine{router: newRouter()}
 }
 
@@ -31,6 +31,6 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 // handler := (http.Handler)(engine)  手动转换为借口类型
 // log.Fatal(http.ListenAndServe(":8080", handler))
 func (engine *Engine) Run(addr string) error {
-	log.Infof("------------Run gee Engine:%s------------", addr)
+	log.InfofW("------------Run gee Engine:%s------------", addr)
 	return http.ListenAndServe(addr, engine)
 }
