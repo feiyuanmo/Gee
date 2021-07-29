@@ -26,6 +26,7 @@ func (r *router) handle(c *Context) {
 	} else {
 		key := c.Method + "-" + c.Path
 		log.InfofW("IP:%s Method:%s Path:%s", c.Host, c.Method, c.Path)
+		log.InfofB("%v", r.handlers[key])
 		if hadler, ok := r.handlers[key]; ok {
 			hadler(c)
 		} else {
