@@ -41,7 +41,7 @@ func (n *node) insert(path string, parts []string, height int) {
 	//对前面几层的处理
 	part := parts[height]
 	child := n.matchChild(part)
-	//没有找到 则创建下一个树节点
+	//没有找到 则创建树节点 然后创建下一层
 	if child == nil {
 		child = &node{part: part, isMatch: part[0] == ':' || part[0] == '*'}
 		n.children = append(n.children, child)
