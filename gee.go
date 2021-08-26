@@ -46,17 +46,17 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
-func (engine *Engine) addRouter(method, path string, handler HandlerFunc) {
-	engine.router.addRoute(method, path, handler)
-}
+// func (engine *Engine) addRouter(method, path string, handler HandlerFunc) {
+// 	engine.router.addRoute(method, path, handler)
+// }
 
-func (engine *Engine) GET(path string, handler HandlerFunc) {
-	engine.addRouter("GET", path, handler)
-}
+// func (engine *Engine) GET(path string, handler HandlerFunc) {
+// 	engine.addRouter("GET", path, handler)
+// }
 
-func (engine *Engine) POST(path string, handler HandlerFunc) {
-	engine.addRouter("POST", path, handler)
-}
+// func (engine *Engine) POST(path string, handler HandlerFunc) {
+// 	engine.addRouter("POST", path, handler)
+// }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	c := newContext(w, req)

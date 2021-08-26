@@ -90,11 +90,11 @@ func (r *router) handle(c *Context) {
 		// } else {
 		// 	c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
 		// }
+		log.InfofW("IP:%s Method:%s Path:%s", c.Host, c.Method, c.Path)
 		n, params := r.getRoute(c.Method, c.Path)
 		if n != nil {
 			c.Params = params
 			key := c.Method + "-" + n.path
-			log.InfofW("IP:%s Method:%s Path:%s", c.Host, c.Method, c.Path)
 			r.handlers[key](c)
 		} else {
 			c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
