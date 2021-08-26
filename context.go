@@ -32,6 +32,10 @@ func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
 }
 
+func (c *Context) PostForm(key string) string {
+	return c.Req.FormValue(key)
+}
+
 func (c *Context) SetHeader(key string, value string) {
 	c.Writer.Header().Set(key, value)
 }
