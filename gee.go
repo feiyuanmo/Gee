@@ -7,13 +7,43 @@ import (
 )
 
 type HandlerFunc func(c *Context)
+
+type RouterGroup struct {
+	prefix string
+	engine *Engine
+}
 type Engine struct {
+	*RouterGroup
 	router *router
 }
 
 func New() *Engine {
 	log.InfofW("------------new gee Engine------------")
-	return &Engine{router: newRouter()}
+	engine := &Engine{router: newRouter()}
+	engine.RouterGroup = &RouterGroup{engine: engine}
+	return engine
+}
+
+func (group *RouterGroup) Group(prefix string) *RouterGroup {
+	engine := group.engine
+	newGroup := &RouterGroup{
+		prefix: group.prefix + prefix,
+		engine: engine,
+	}
+	return newGroup
+}
+
+func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
+	pattern := group.prefix + comp
+	group.engine.router.addRoute(method, pattern, handler)
+}
+
+func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
+	group.addRoute("GET", pattern, handler)
+}
+
+func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
+	group.addRoute("POST", pattern, handler)
 }
 
 func (engine *Engine) addRouter(method, path string, handler HandlerFunc) {
