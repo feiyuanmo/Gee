@@ -2,27 +2,49 @@ package gee
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/feiyuanmo/gee/log"
 )
 
 type HandlerFunc func(c *Context)
 
+//父类
 type RouterGroup struct {
-	prefix string
-	engine *Engine
+	prefix      string
+	middlewares []HandlerFunc
+	engine      *Engine
 }
+
+// type RouterGroup struct {
+// 	prefix      string // 支持叠加
+// 	router      *router
+// }
+
+//子类
 type Engine struct {
-	*RouterGroup
-	router *router
+	*RouterGroup //继承于父类
+	router       *router
+	groups       []*RouterGroup
 }
+
+// type Engine struct {
+// 	*RouterGroup
+// }
 
 func New() *Engine {
 	log.InfofW("------------new gee Engine------------")
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine: engine}
+	engine.groups = []*RouterGroup{engine.RouterGroup}
 	return engine
 }
+
+// func New() *Engine {
+// 	engine := &Engine{}
+// 	engine.RouterGroup = &RouterGroup{router: newRouter()}
+// 	return engine
+// }
 
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
@@ -30,13 +52,27 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 		prefix: group.prefix + prefix,
 		engine: engine,
 	}
+	engine.groups = append(engine.groups, newGroup)
 	return newGroup
 }
+
+// func (group *RouterGroup) Group(prefix string) *RouterGroup {
+// 	newGroup := &RouterGroup{
+// 		prefix: group.prefix + prefix,
+// 		router: group.router,
+// 	}
+// 	return newGroup
+// }
 
 func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
 	pattern := group.prefix + comp
 	group.engine.router.addRoute(method, pattern, handler)
 }
+
+// func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
+// 	pattern := group.prefix + comp
+// 	group.router.addRoute(method, pattern, handler)
+// }
 
 func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
 	group.addRoute("GET", pattern, handler)
@@ -44,6 +80,10 @@ func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
 
 func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
+}
+
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }
 
 // func (engine *Engine) addRouter(method, path string, handler HandlerFunc) {
@@ -59,7 +99,14 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 // }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
+	c.handlers = middlewares
 	engine.router.handle(c)
 }
 
