@@ -6,7 +6,7 @@ import (
 	"github.com/feiyuanmo/gee/log"
 )
 
-func logger() HandlerFunc {
+func Logger() HandlerFunc {
 	return func(c *Context) {
 		t := time.Now()
 
