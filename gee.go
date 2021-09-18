@@ -1,6 +1,7 @@
 package gee
 
 import (
+	"html/template"
 	"net/http"
 	"path"
 	"strings"
@@ -24,9 +25,11 @@ type RouterGroup struct {
 
 //子类
 type Engine struct {
-	*RouterGroup //继承于父类
-	router       *router
-	groups       []*RouterGroup
+	*RouterGroup  //继承于父类
+	router        *router
+	groups        []*RouterGroup
+	htmlTemplates *template.Template
+	funcMap       template.FuncMap
 }
 
 // type Engine struct {
@@ -112,6 +115,14 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	engine.router.handle(c)
 }
 
+func (engine *Engine) SetFuncMap(funcMap template.FuncMap) {
+	engine.funcMap = funcMap
+}
+
+func (engine *Engine) LoadHTMLGlob(path string) {
+	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(path))
+}
+
 // handler := (http.Handler)(engine)  手动转换为借口类型
 // log.Fatal(http.ListenAndServe(":8080", handler))
 func (engine *Engine) Run(addr string) error {
@@ -123,12 +134,9 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	// Join函数可以将任意数量的路径元素放入一个单一路径里，会根据需要添加斜杠。结果是经过简化的，所有的空字符串元素会被忽略。
 	absolutePath := path.Join(group.prefix, relativePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
-	log.InfoW(fileServer)
 	return func(c *Context) {
 		file := c.Param("filepath")
-		log.InfoW(file)
 		if _, err := fs.Open(file); err != nil {
-			log.InfoW(err)
 			c.Status(http.StatusNotFound)
 			return
 		}
@@ -139,9 +147,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 
 func (group *RouterGroup) Static(relativePath string, root string) {
 	handler := group.createStaticHandler(relativePath, http.Dir(root))
-	log.InfoW(http.Dir(root))
 	urlPath := path.Join(relativePath, "/*filepath")
 
-	log.InfoW(urlPath)
 	group.GET(urlPath, handler)
 }
