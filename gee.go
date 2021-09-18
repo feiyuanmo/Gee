@@ -124,7 +124,7 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
 	return func(c *Context) {
 		file := c.Param("filepath")
-
+		log.InfoW(file)
 		if _, err := fs.Open(file); err != nil {
 			c.Status(http.StatusNotFound)
 			return
@@ -138,5 +138,6 @@ func (group *RouterGroup) Static(relativePath string, root string) {
 	handler := group.createStaticHandler(relativePath, http.Dir(root))
 	urlPath := path.Join(relativePath, "/*filepath")
 
+	log.InfoW(urlPath)
 	group.GET(urlPath, handler)
 }
