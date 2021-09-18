@@ -2,6 +2,7 @@ package gee
 
 import (
 	"net/http"
+	"path"
 	"strings"
 
 	"github.com/feiyuanmo/gee/log"
@@ -115,4 +116,27 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (engine *Engine) Run(addr string) error {
 	log.InfofW("------------Run gee Engine:%s------------", addr)
 	return http.ListenAndServe(addr, engine)
+}
+
+func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
+	// Join函数可以将任意数量的路径元素放入一个单一路径里，会根据需要添加斜杠。结果是经过简化的，所有的空字符串元素会被忽略。
+	absolutePath := path.Join(group.prefix, relativePath)
+	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	return func(c *Context) {
+		file := c.Param("filepath")
+
+		if _, err := fs.Open(file); err != nil {
+			c.Status(http.StatusNotFound)
+			return
+		}
+
+		fileServer.ServeHTTP(c.Writer, c.Req)
+	}
+}
+
+func (group *RouterGroup) static(relativePath string, root string) {
+	handler := group.createStaticHandler(relativePath, http.Dir(root))
+	urlPath := path.Join(relativePath, "/*filepath")
+
+	group.GET(urlPath, handler)
 }
