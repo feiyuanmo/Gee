@@ -127,10 +127,11 @@ func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileS
 	return func(c *Context) {
 		file := c.Param("filepath")
 		log.InfoW(file)
-		// if _, err := fs.Open(file); err != nil {
-		// 	c.Status(http.StatusNotFound)
-		// 	return
-		// }
+		if _, err := fs.Open(file); err != nil {
+			log.InfoW(err)
+			c.Status(http.StatusNotFound)
+			return
+		}
 
 		fileServer.ServeHTTP(c.Writer, c.Req)
 	}
