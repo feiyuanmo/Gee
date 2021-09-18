@@ -108,6 +108,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 	c := newContext(w, req)
 	c.handlers = middlewares
+	c.engine = engine
 	engine.router.handle(c)
 }
 
@@ -121,7 +122,9 @@ func (engine *Engine) Run(addr string) error {
 func (group *RouterGroup) createStaticHandler(relativePath string, fs http.FileSystem) HandlerFunc {
 	// Join函数可以将任意数量的路径元素放入一个单一路径里，会根据需要添加斜杠。结果是经过简化的，所有的空字符串元素会被忽略。
 	absolutePath := path.Join(group.prefix, relativePath)
+	log.InfoW(absolutePath)
 	fileServer := http.StripPrefix(absolutePath, http.FileServer(fs))
+	log.InfoW(fileServer)
 	return func(c *Context) {
 		file := c.Param("filepath")
 		log.InfoW(file)

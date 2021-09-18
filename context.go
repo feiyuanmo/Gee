@@ -16,6 +16,7 @@ type Context struct {
 	Host       string
 	Params     map[string]string
 	StatusCode int
+	engine     *Engine
 
 	handlers []HandlerFunc
 	index    int
