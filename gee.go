@@ -35,6 +35,11 @@ type Engine struct {
 // type Engine struct {
 // 	*RouterGroup
 // }
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
+	return engine
+}
 
 func New() *Engine {
 	log.InfofW("------------new gee Engine------------")
