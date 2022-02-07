@@ -217,5 +217,40 @@ Engine struct {
 
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
+    engine.RouterGroup = &RouterGroup{engine: engine}
 	return engine
 }
+
+ (*Engine).engine 指向自己  套娃？
+=================================================================================
+pattern := group.prefix + comp
+
+group.engine.router.addRoute(method, pattern, handler)
+
+engine.router.addRoute(method, pattern, handler)
+
+=================================================================================
+
+#5.0中间件
+思路 Context handlers []HandlerFunc 按顺序放好要执行的handlers 然后一个一个的执行
+
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		c.handlers[c.index](c)
+	}
+}
+
+func A(c *Context) {
+    part1
+    c.Next()
+    part2
+}
+func B(c *Context) {
+    part3
+    c.Next()
+    part4
+}
+
+part1 -> part3 -> Handler -> part 4 -> part2
